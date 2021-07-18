@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <button id="btn">click</button>
+  <script>
+    const btn = document.getElementById('btn');
+const wsConnection = new WebSocket("ws://localhost:8999/echo");
+
+const isJson = (str) => {
+  try {
+      JSON.parse(str);
+  } catch (e) {
+      return false;
+  }
+  return true;
+}
+
+const sendMessage = (message) => wsConnection.send(JSON.stringify({payload: { message }}));
+
+wsConnection.onopen = function(msg) {
+  console.log(msg)
+  btn.addEventListener('click', () => sendMessage('кек'))
+};
+
+wsConnection.onclose = function(event) {
+    if (event.wasClean) {
+        console.log('Соединение закрыто чисто');
+    } else {
+        console.log('Обрыв соединения'); // например, "убит" процесс сервера
+    }
+    console.log('Код: ' + event.code + ' причина: ' + event.reason);
+};
+
+wsConnection.onerror = function(error) {
+    console.log("Ошибка " + error.message);
+};
+wsConnection.onmessage = function (event) {
+  if(isJson(event.data)){
+    console.log(JSON.parse(event.data))
+  } else console.log(event);
+}
+</script>
+</body>
+</html>
