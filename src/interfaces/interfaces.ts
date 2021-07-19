@@ -1,3 +1,4 @@
+import WebSocket from 'ws';
 import { ChessFigures, FigureColor } from '../enums/enums';
 
 export interface IMoves {
@@ -16,4 +17,12 @@ export interface IReplayMember {
 export interface IReplay {
   [FigureColor.BLACK]: IReplayMember;
   [FigureColor.WHITE]: IReplayMember;
+}
+
+export interface IWebSocketExt {
+  socket: WebSocket;
+  id: string;
+  opponent:string | null;
+  name: string;
+  readyToPlay: boolean;
 }

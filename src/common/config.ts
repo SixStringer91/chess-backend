@@ -6,6 +6,6 @@ dotenv.config({
 });
 
 export const {
-  DB_URL,
+  MONGO_DB_URL,
   PORT
 } = process.env;

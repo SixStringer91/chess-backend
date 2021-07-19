@@ -11,3 +11,10 @@ export enum ChessFigures {
   QUEEN = 'QUEEN',
   PAWN = 'PAWN'
 }
+
+export enum SocketEvents {
+  MOVE = 'MOVE',
+  CHANGE_NAME = 'CHANGE_NAME',
+  START = 'START',
+  GAME_OWER = 'GAME_OWER'
+}

@@ -7,11 +7,12 @@
   <title>Document</title>
 </head>
 <body>
-  
+  <input id="hellop" type="text">
   <button id="btn">click</button>
   <script>
+    const input = document.getElementById('hellop');
     const btn = document.getElementById('btn');
-const wsConnection = new WebSocket("ws://localhost:8999/echo");
+const wsConnection = new WebSocket("ws://localhost:4000/echo");
 
 const isJson = (str) => {
   try {
@@ -22,11 +23,11 @@ const isJson = (str) => {
   return true;
 }
 
-const sendMessage = (message) => wsConnection.send(JSON.stringify({payload: { message }}));
+const sendMessage = (message) => wsConnection.send(JSON.stringify({payload: { event:'MOVE', message }}));
 
 wsConnection.onopen = function(msg) {
   console.log(msg)
-  btn.addEventListener('click', () => sendMessage('кек'))
+  btn.addEventListener('click', () => sendMessage(input.value))
 };
 
 wsConnection.onclose = function(event) {
