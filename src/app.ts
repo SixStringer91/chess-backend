@@ -3,9 +3,10 @@ import enableWs from 'express-ws';
 import cors from 'cors';
 import replays from './resources/moves/moves.controller';
 import { websocketHandler } from './middleware/websocket/websocket.controller';
-import { ErrorHandler, handleError, uncaughtException, unhandledRejection } from './middleware/errors/error.handler';
+import {
+  ErrorHandler, handleError, uncaughtException, unhandledRejection
+} from './middleware/errors/error.handler';
 import { logerRequests } from './middleware/loger/logger';
-
 
 const appBase = express();
 const wsInstance = enableWs(appBase);

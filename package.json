@@ -9,7 +9,7 @@
     "build": "tsc --project .",
     "start": "ts-node ./src/server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:prod": "node dist/main",
+    "start:prod": "node build/server",
     "start:debug": "node --inspect -r ts-node/register src/server.ts -w"
   },
   "repository": {
