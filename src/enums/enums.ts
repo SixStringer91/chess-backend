@@ -16,5 +16,6 @@ export enum SocketEvents {
   MOVE = 'MOVE',
   CHANGE_NAME = 'CHANGE_NAME',
   START = 'START',
-  GAME_OWER = 'GAME_OWER'
+  GAME_OWER = 'GAME_OWER',
+  CLOSE = 'CLOSE'
 }

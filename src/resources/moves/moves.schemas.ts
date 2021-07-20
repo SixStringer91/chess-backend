@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { FigureColor, ChessFigures } from '../enums/enums';
-import { IReplay } from '../interfaces/interfaces';
+import { FigureColor, ChessFigures } from '../../enums/enums';
+import { IReplay } from '../../interfaces/interfaces';
 
 const figureMoves = {
   prevPosition: [Number, Number],

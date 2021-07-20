@@ -1,4 +1,5 @@
 import { IReplay } from '../../interfaces/interfaces';
-import { create } from '../../schemas/mongoose.schemas';
+import { Moves } from './moves.schemas';
 
-export const createTest = async ():Promise<IReplay> => create();
+export const getAll = async (): Promise<IReplay> => Moves.find({});
+export const addReplay = async (body: IReplay): Promise<IReplay> => Moves.create(body);

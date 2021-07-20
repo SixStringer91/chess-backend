@@ -15,37 +15,39 @@ const searchOpponent = (ws: IWebSocketExt): void => {
     const randomBoolean = !!Math.ceil(0.5 - Math.random());
     partner.opponent = applicant.id;
     applicant.opponent = partner.id;
-    partner.socket.send(JSON.stringify({ event: 'START', enemy_name: applicant.name, your_color: colors[+randomBoolean] }));
-    applicant.socket.send(JSON.stringify({ event: 'START', enemy_name: partner.name, your_color: colors[+!randomBoolean] }));
+    partner.socket.send(
+      JSON.stringify({
+        event: 'START',
+        enemy_name: applicant.name,
+        your_color: colors[+randomBoolean]
+      })
+    );
+    applicant.socket.send(
+      JSON.stringify({
+        event: 'START',
+        enemy_name: partner.name,
+        your_color: colors[+!randomBoolean]
+      })
+    );
   } else applicant.socket.send(JSON.stringify({ event: 'WAITING' }));
 };
 
-export const onMessageSwitch = (
-  ws: IWebSocketExt,
-  msg: WebSocket.Data
-): void => {
-  const recieved = JSON.parse(msg as string);
-  const sender = ws;
-  const ind = CLIENTS.findIndex((client) => client.opponent === sender.id);
-  switch (recieved.payload.event) {
-    case SocketEvents.MOVE:
-      if (ind !== -1) {
-        (<IWebSocketExt>CLIENTS[ind]).socket.send(msg);
+export const deleteClient = (id: string): void => {
+  const findedInd = CLIENTS.findIndex((client) => client.id === id);
+  const finded = findedInd !== -1 && (CLIENTS[findedInd] as IWebSocketExt);
+  if (finded) {
+    if (finded.opponent) {
+      const findOpponentInd = CLIENTS.findIndex(
+        (client) => client.opponent === finded.id
+      );
+      if (findOpponentInd !== -1) {
+        const opponent = CLIENTS[findOpponentInd] as IWebSocketExt;
+        opponent.socket.close();
+        CLIENTS.slice(findOpponentInd, 1);
       }
-      break;
-    case SocketEvents.CHANGE_NAME:
-      sender.name = recieved.payload.name;
-      sender.socket.send(`name changed to ${recieved.payload.name}`);
-      break;
-    case SocketEvents.START:
-      sender.readyToPlay = true;
-      searchOpponent(sender);
-      break;
-    case SocketEvents.GAME_OWER:
-      console.log(msg);
-      break;
-    default:
-      break;
+    }
+    finded.socket.close();
+    CLIENTS.slice(findedInd, 1);
   }
 };
 
@@ -54,7 +56,44 @@ export const initNewClient = (ws: IWebSocketExt): void => {
   CLIENTS.push(applicant);
 };
 
-export const deleteClient = (id: string): void => {
-  const find = CLIENTS.findIndex((client) => client.id === id);
-  CLIENTS.slice(find, 1);
+export const onMessageSwitch = (
+  ws: IWebSocketExt,
+  msg: WebSocket.Data
+): void => {
+  const recieved = JSON.parse(msg as string);
+  const sender = ws;
+  try {
+    const ind = CLIENTS.findIndex((client) => client.opponent === sender.id);
+    switch (recieved.payload.event) {
+      case SocketEvents.MOVE:
+        if (ind !== -1) {
+          (<IWebSocketExt>CLIENTS[ind]).socket.send(
+            JSON.stringify(recieved.payload)
+          );
+        }
+        break;
+      case SocketEvents.CHANGE_NAME:
+        sender.name = recieved.payload.name;
+        sender.socket.send(`name changed to ${recieved.payload.name}`);
+        break;
+      case SocketEvents.START:
+        sender.readyToPlay = true;
+        searchOpponent(sender);
+        break;
+      case SocketEvents.GAME_OWER:
+        if (ind !== -1) {
+          (<IWebSocketExt>CLIENTS[ind]).socket.send(
+            JSON.stringify(recieved.payload)
+          );
+        }
+        break;
+      case SocketEvents.CLOSE:
+        deleteClient(sender.id);
+        break;
+      default:
+        break;
+    }
+  } catch {
+    deleteClient(sender.id);
+  }
 };
