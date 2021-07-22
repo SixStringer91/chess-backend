@@ -6,6 +6,18 @@
     "jest": true,
     "node": true
   },
+  "overrides": [
+    {
+      "files": ["*.ts', '*.tsx"], // Your TypeScript files extension
+      "parserOptions": {
+
+        "sourceType": "module",
+        "tsconfigRootDir": "__dirname",
+        "project": ["./tsconfig.eslint.json","./webpack.config.js"]
+      }
+    }
+  ],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "project": "./tsconfig.json",
     "sourceType": "module",

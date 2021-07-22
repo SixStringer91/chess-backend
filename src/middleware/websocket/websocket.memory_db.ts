@@ -33,6 +33,7 @@ const searchOpponent = (ws: IWebSocketExt): void => {
 };
 
 export const deleteClient = (id: string): void => {
+  console.log(CLIENTS);
   const findedInd = CLIENTS.findIndex((client) => client.id === id);
   const finded = findedInd !== -1 && (CLIENTS[findedInd] as IWebSocketExt);
   if (finded) {
@@ -43,11 +44,11 @@ export const deleteClient = (id: string): void => {
       if (findOpponentInd !== -1) {
         const opponent = CLIENTS[findOpponentInd] as IWebSocketExt;
         opponent.socket.close();
-        CLIENTS.slice(findOpponentInd, 1);
+        CLIENTS.splice(findOpponentInd, 1);
       }
     }
     finded.socket.close();
-    CLIENTS.slice(findedInd, 1);
+    CLIENTS.splice(findedInd, 1);
   }
 };
 

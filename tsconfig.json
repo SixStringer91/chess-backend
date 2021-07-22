@@ -22,6 +22,9 @@
     "sourceMap": true,
     "strictPropertyInitialization":false,
   },
+  "parserOptions": {
+    "project": "./tsconfig.eslint.json"
+  },
   "exclude": [
     "node_modules/"
   ],

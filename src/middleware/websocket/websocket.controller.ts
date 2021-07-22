@@ -16,12 +16,13 @@ export const websocketHandler = (ws: WebSocket): void => {
     readyToPlay: false
   };
   initNewClient(client);
+  const { id } = client;
   console.log(`user ${client.id} connected`);
   client.socket.on('message', (msg) => {
     onMessageSwitch(client, msg);
   });
   client.socket.on('close', () => {
-    deleteClient(client.id);
+    deleteClient(id);
     console.log('WebSocket was closed');
   });
 };
