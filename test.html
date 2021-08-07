@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <input id="hellop" type="text">
+  <button id="btn">click</button>
+  <script>
+    const input = document.getElementById('hellop');
+    const btn = document.getElementById('btn');
+const wsConnection = new WebSocket("ws://localhost:4000/echo");
+
+const isJson = (str) => {
+  try {
+      JSON.parse(str);
+  } catch (e) {
+      return false;
+  }
+  return true;
+}
+
+
+
+
+
+let headersList = {
+ "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjQ5ZTkzZDQzLWNjODctNDM4OS1hMTkzLWRmODU5NTg4ZjhjMSIsImlhdCI6MTYyNjA2NTUxOCwiZXhwIjoxNjI2MTUxOTE4fQ.5VDD0Z6qurtVbMHieN-64PaAFVN5ssbbQtwX2Aw0AsU",
+ "Content-Type": "application/json"
+}
+
+fetch("http://localhost:4000/replays", { 
+  method: "POST",
+  body: "{\r\n\"#FFC533\":{\r\n\"name\":\"Player 1\",\r\n\"moves\":[\r\n{\r\n\"prevPosition\":[\r\n0,\r\n1\r\n],\r\n\"position\":[\r\n1,\r\n1\r\n],\r\n\"_id\":\"60f39b2c078fbd37404e2539\",\r\n\"time\":2002020,\r\n\"color\":\"#FFC533\",\r\n\"type\":\"HORSE\"\r\n}\r\n]\r\n},\r\n\"#E0ECF6\":{\r\n\"name\":\"Player 2\",\r\n\"moves\":[\r\n{\r\n\"prevPosition\":[\r\n0,\r\n1\r\n],\r\n\"position\":[\r\n1,\r\n1\r\n],\r\n\"_id\":\"60f39b2c078fbd37404e253a\",\r\n\"time\":2002020,\r\n\"color\":\"#E0ECF6\",\r\n\"type\":\"ROOK\"\r\n}\r\n]\r\n}",
+  headers: headersList
+}).then(function(response) {
+  return response.text();
+}).then(function(data) {
+  console.log(data);
+})
+const sendMessage = (message) => wsConnection.send(JSON.stringify({payload: { event:'MOVE', message }}));
+
+wsConnection.onopen = function(msg) {
+  console.log(msg)
+  btn.addEventListener('click', () => sendMessage(input.value))
+};
+
+wsConnection.onclose = function(event) {
+    if (event.wasClean) {
+        console.log('Соединение закрыто чисто');
+    } else {
+        console.log('Обрыв соединения'); // например, "убит" процесс сервера
+    }
+    console.log('Код: ' + event.code + ' причина: ' + event.reason);
+};
+
+wsConnection.onerror = function(error) {
+    console.log("Ошибка " + error.message);
+};
+wsConnection.onmessage = function (event) {
+  if(isJson(event.data)){
+    console.log(JSON.parse(event.data))
+  } else console.log(event);
+}
+</script>
+</body>
+</html>
